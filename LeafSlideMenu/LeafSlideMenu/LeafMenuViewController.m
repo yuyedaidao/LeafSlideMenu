@@ -26,23 +26,33 @@ static LeafMenuViewController *_menu = nil;
 +(instancetype)shareInstance{
     return _menu;
 }
+-(void)prepare{
+    _menu = self;
+    _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.opened = YES;
+    
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandle:)];
+    [self.contentView addGestureRecognizer:pan];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandle:)];
+    tap.delegate = self;
+    [tap setDelaysTouchesEnded:YES];
+    [self.contentView addGestureRecognizer:tap];
+}
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        _menu = self;
-        _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
-        self.opened = YES;
-        
-        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandle:)];
-        [self.contentView addGestureRecognizer:pan];
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandle:)];
-        tap.delegate = self;
-        [tap setDelaysTouchesEnded:YES];
-        [self.contentView addGestureRecognizer:tap];
-        
+        [self prepare];
+    }
+    return self;
+}
+- (id)init{
+    self = [super init];
+    if (self) {
+        // Custom initialization
+        [self prepare];
     }
     return self;
 }
@@ -93,7 +103,7 @@ static LeafMenuViewController *_menu = nil;
 
 #pragma custom method
 -(instancetype)initWithLeftVC:(UIViewController *)leftVC centerVCs:(NSArray *)centerVCs{
-    if([self initWithNibName:@"LeafMenuViewController" bundle:nil]){
+    if([self init]){
         self.leftVC = leftVC;
         self.viewControllers = centerVCs;
         //
